@@ -153,7 +153,7 @@ async function post(data_url, post_body, tabId) {
         });
 }
 
-// for avoid overheat.
+// for avoid reload overheat.
 chrome.storage.local.set({
     last_reload_timestamp: []
 });

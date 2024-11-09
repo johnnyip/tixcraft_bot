@@ -2857,7 +2857,7 @@ def kktix_reg_captcha(driver, config_dict, fail_list, registrationsNewApp_div):
 
         # PS: auto-focus() when empty inferred_answer_string with empty inputed text value.
         if len(inferred_answer_string) > 0:
-            input_text_css = 'div.custom-captcha-inner > div > div > input'
+            input_text_css = 'div.custom-captcha-inner > div input[type="text"]'
             next_step_button_css = ''
             submit_by_enter = False
             check_input_interval = 0.2
