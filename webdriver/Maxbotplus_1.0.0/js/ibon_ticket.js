@@ -61,8 +61,8 @@ function ibon_get_ocr_image()
     const currentUrl = window.location.href;
     const domain = currentUrl.split('/')[2];
 
-    let image_id = 'chk_pic';
-    let img = document.getElementById(image_id);
+    let image_selector = 'img.chk_pic';
+    let img = document.querySelector(image_selector);
     if(img!=null) {
         let canvas = document.createElement('canvas');
         let context = canvas.getContext('2d');
@@ -80,20 +80,29 @@ function ibon_get_ocr_image()
 
 chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
+
+    // disable ocr from extension.
     ibon_set_ocr_answer(message.answer);
 });
+
+function isInteger(value) {
+    return /^-?\d+$/.test(value);
+}
 
 function ibon_set_ocr_answer(answer)
 {
     console.log("answer:"+answer);
     if(answer.length > 0) {
-        $("div.editor-box > div > input[type='text']").val(answer);
-        //console.log($("div#ticket-wrap a[onclick]").length);
-        //$("div#ticket-wrap a[onclick]").click();
-        //$("#aspnetForm").submit();
-        let done_div="<div style='display:none' id='done'></div>";
-        $("body").append(done_div);
-
+        if(answer.length >= 4 && isInteger(answer)) {
+            $("div.editor-box > div > input[type='text']").val(answer);
+            //console.log($("div#ticket-wrap a[onclick]").length);
+            //$("div#ticket-wrap a[onclick]").click();
+            //$("#aspnetForm").submit();
+            let done_div="<div style='display:none' id='done'></div>";
+            $("body").append(done_div);
+        } else {
+            $('img[onclick="refreshCaptcha();"]').click();
+        }
     }
 }
 
@@ -119,6 +128,7 @@ function ibon_orc_image_ready(api_url)
     if(image_data.length>0) {
         ret=true;
         if(myInterval) clearInterval(myInterval);
+        
         ibon_get_ocr_answer(api_url, image_data);
     }
     //console.log("ibon_orc_image_ready:"+ret);

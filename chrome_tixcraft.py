@@ -6978,10 +6978,9 @@ def ibon_auto_ocr(driver, config_dict, ocr, away_from_keyboard_enable, previous_
             if not Captcha_Browser is None:
                 img_base64 = base64.b64decode(Captcha_Browser.request_captcha())
         if ocr_captcha_image_source == CONST_OCR_CAPTCH_IMAGE_SOURCE_CANVAS:
-            image_id = 'chk_pic'
+            my_css_selector = 'img.chk_pic'
             image_element = None
             try:
-                my_css_selector = "#" + image_id
                 image_element = driver.find_elements(By.CSS_SELECTOR, my_css_selector)
             except Exception as exc:
                 pass
@@ -6992,14 +6991,14 @@ def ibon_auto_ocr(driver, config_dict, ocr, away_from_keyboard_enable, previous_
                     form_verifyCode_base64 = driver.execute_async_script("""
                         var canvas = document.createElement('canvas');
                         var context = canvas.getContext('2d');
-                        var img = document.getElementById('%s');
+                        var img = document.querySelector('%s');
                         if(img!=null) {
                         canvas.height = img.naturalHeight;
                         canvas.width = img.naturalWidth;
                         context.drawImage(img, 0, 0);
                         callback = arguments[arguments.length - 1];
                         callback(canvas.toDataURL()); }
-                        """ % (image_id))
+                        """ % (my_css_selector))
                     if not form_verifyCode_base64 is None:
                         img_base64 = base64.b64decode(form_verifyCode_base64.split(',')[1])
                 except Exception as exc:
@@ -7021,7 +7020,7 @@ def ibon_auto_ocr(driver, config_dict, ocr, away_from_keyboard_enable, previous_
     if not ocr_answer is None:
         ocr_answer = ocr_answer.strip()
         print("ocr_answer:", ocr_answer)
-        if len(ocr_answer)==4:
+        if len(ocr_answer)==4 and ocr_answer.isnumeric():
             who_care_var = ibon_keyin_captcha_code(driver, answer = ocr_answer, auto_submit = away_from_keyboard_enable)
         else:
             if not away_from_keyboard_enable:
@@ -7033,7 +7032,8 @@ def ibon_auto_ocr(driver, config_dict, ocr, away_from_keyboard_enable, previous_
                     print("click captcha again")
                     if True:
                         # selenium solution.
-                        jquery_string = '$("#chk_pic").attr("src", "/pic.aspx?TYPE=%s&ts=" + new Date().getTime());' % (model_name)
+                        #jquery_string = '$("#chk_pic").attr("src", "/pic.aspx?TYPE=%s&ts=" + new Date().getTime());' % (model_name)
+                        jquery_string = 'refreshCaptcha();'
                         driver.execute_script(jquery_string)
 
                         if ocr_captcha_image_source == CONST_OCR_CAPTCH_IMAGE_SOURCE_CANVAS:
@@ -7070,7 +7070,7 @@ def ibon_captcha(driver, config_dict, ocr, Captcha_Browser, model_name):
     is_captcha_sent = False
     previous_answer = None
     last_url, is_quit_bot = get_current_url(driver)
-    for redo_ocr in range(19):
+    for redo_ocr in range(9):
         is_need_redo_ocr, previous_answer, is_form_sumbited = ibon_auto_ocr(driver, config_dict, ocr, away_from_keyboard_enable, previous_answer, Captcha_Browser, ocr_captcha_image_source, model_name)
 
         # TODO: must ensure the answer is corrent...
