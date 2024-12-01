@@ -33,10 +33,11 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.04.30)"
+CONST_APP_VERSION = "MaxBot (2024.05.01)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
+CONST_MAXBOT_EXTENSION_STATUS_JSON = "status.json"
 CONST_MAXBOT_EXTENSION_NAME = "Maxbotplus_1.0.0"
 CONST_MAXBOT_INT28_FILE = "MAXBOT_INT28_IDLE.txt"
 CONST_MAXBOT_LAST_URL_FILE = "MAXBOT_LAST_URL.txt"
@@ -169,6 +170,27 @@ def read_last_url_from_file():
     with open(CONST_MAXBOT_LAST_URL_FILE, "r") as text_file:
         ret = text_file.readline()
     return ret
+
+def sync_status_to_extension(status):
+    # sync generated ext status.
+    Root_Dir = util.get_app_root()
+    webdriver_folder = os.path.join(Root_Dir, "webdriver")
+    target_folder_list = os.listdir(webdriver_folder)
+    for item in target_folder_list:
+        if item.startswith("tmp_" + CONST_MAXBOT_EXTENSION_NAME):
+            target_path = os.path.join(webdriver_folder, item)
+            target_path = os.path.join(target_path, "data")
+            if os.path.exists(target_path):
+                target_path = os.path.join(target_path, CONST_MAXBOT_EXTENSION_STATUS_JSON)
+                #print("save as to:", target_path)
+                status_json={}
+                status_json["status"]=status
+                #print("dump json to path:", target_path)
+                try:
+                    with open(target_path, 'w') as outfile:
+                        json.dump(status_json, outfile)
+                except Exception as e:
+                    pass
 
 def play_sound_while_ordering(config_dict):
     app_root = util.get_app_root()
@@ -2435,6 +2457,7 @@ async def main(args):
         is_maxbot_paused = False
         if os.path.exists(CONST_MAXBOT_INT28_FILE):
             is_maxbot_paused = True
+        sync_status_to_extension(not is_maxbot_paused)
 
         if len(url) > 0 :
             if url != last_url:

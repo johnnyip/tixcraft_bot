@@ -1,4 +1,3 @@
-const storage = chrome.storage.local;
 var settings = null;
 
 $("ul.area-list > li:not(:has(a))").remove();
@@ -102,38 +101,49 @@ function tixcraft_area_list_keyword(area_keyword_array, area_order_mode) {
 }
 
 async function do_reload_if_not_overheat(user_auto_reload_page_interval, auto_reload_overheat_count, auto_reload_overheat_cd) {
+    const overheat_second = 2.5;
+    const overheat_second_target = overheat_second * 1000;
     let auto_reload_page_interval = user_auto_reload_page_interval;
     chrome.storage.local.get('last_reload_timestamp', function(items) {
         if (items.last_reload_timestamp) {
             let new_timestamp = [];
             const now = new Date().getTime();
-            const overheat_second = 2.5;
+            
             //for (let i = items.last_reload_timestamp.length - 1; i >= 0; i--) {
             for (let i = 0; i < items.last_reload_timestamp.length; i++) {
                 let each_time = items.last_reload_timestamp[i];
                 let current_diff = now - each_time;
-                if (current_diff <= overheat_second * 1000) {
+                if (current_diff <= overheat_second_target) {
                     //last_reload_timestamp.splice(i, 1);
                     new_timestamp.push(each_time);
                 }
-            }
-            if (new_timestamp.length >= auto_reload_overheat_count) {
-                console.log("overheat, slow down!");
-                auto_reload_page_interval = auto_reload_overheat_cd;
             }
             new_timestamp.push(now);
             chrome.storage.local.set({
                 last_reload_timestamp: new_timestamp
             });
-            if (auto_reload_page_interval == 0) {
+
+            if (new_timestamp.length >= auto_reload_overheat_count) {
+                console.log("overheat, slow down!");
+                auto_reload_page_interval = auto_reload_overheat_cd;
+            }
+
+            const target_delay = auto_reload_page_interval * 1000;
+            //console.log("target_delay:" + target_delay);
+            if (target_delay < 100) {
                 //console.log('Start to reload now.');
                 location.reload();
             } else {
                 //console.log('We are going to reload after few seconeds.');
                 setTimeout(function() {
                     location.reload();
-                }, auto_reload_page_interval * 1000);
+                }, target_delay);
             }
+        } else {
+            console.log("initial timestamp.");
+            chrome.storage.local.set({
+                last_reload_timestamp: []
+            });
         }
     });
 }
@@ -151,23 +161,25 @@ function area_auto_reload() {
 
     if (reload) {
         if (settings) {
-            let user_auto_reload_page_interval = settings.auto_reload_overheat_count;
-            let user_auto_reload_overheat_count = settings.auto_reload_overheat_count;
-            let user_auto_reload_overheat_cd = settings.auto_reload_overheat_cd;
+            if (areaInterval) clearInterval(areaInterval);
+            
+            let user_auto_reload_page_interval = settings.advanced.auto_reload_page_interval;
+            let user_auto_reload_overheat_count = settings.advanced.auto_reload_overheat_count;
+            let user_auto_reload_overheat_cd = settings.advanced.auto_reload_overheat_cd;
             do_reload_if_not_overheat(user_auto_reload_page_interval, user_auto_reload_overheat_count, user_auto_reload_overheat_cd);
         }
     }
 }
 
-storage.get('settings', function(items) {
+chrome.storage.local.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
     }
 });
 
 var areaInterval = setInterval(() => {
-    if (storage) {
-        storage.get('status', function(items) {
+    if (chrome.storage.local) {
+        chrome.storage.local.get('status', function(items) {
             if (items.status && items.status == 'ON') {
                 area_auto_reload();
             } else {
