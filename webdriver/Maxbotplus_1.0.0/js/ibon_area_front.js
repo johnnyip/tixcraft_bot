@@ -15,8 +15,8 @@ function dom_ready()
                 console.log($("#"+target_id).text());
                 //https://orders.ibon.com.tw/application/UTK02/UTK0201_000.aspx?PERFORMANCE_ID=B06PV2MC&PRODUCT_ID=B06PS1OC
                 //https://orders.ibon.com.tw/application/UTK02/UTK0202_.aspx?PERFORMANCE_ID=B06PV2MC&GROUP_ID=&PERFORMANCE_PRICE_AREA_ID=B06PV2PH
-                $("#"+target_id).trigger("click");
-                onTicketArea(target_id);
+                //$("#"+target_id).trigger("click");
+                //onTicketArea(target_id);
             }
         })();
     }

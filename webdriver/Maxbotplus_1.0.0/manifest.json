@@ -245,56 +245,6 @@
         },
         {
             "matches": [
-                "https://orders.ibon.com.tw/application/utk02/UTK0201_000.aspx?*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0201_000.aspx?*"
-            ],
-            "run_at": "document_end",
-            "js": [
-                "jquery.min.js",
-                "js/ibon_area.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://orders.ibon.com.tw/application/utk02/UTK0201_000.aspx?*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0201_000.aspx?*"
-            ],
-            "run_at": "document_end",
-            "world": "MAIN",
-            "js": [
-                "jquery.min.js",
-                "js/ibon_area_front.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://orders.ibon.com.tw/application/utk02/UTK0201_001.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0201_001.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/utk02/UTK0202_.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0202_.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*"
-            ],
-            "run_at": "document_end",
-            "js": [
-                "jquery.min.js",
-                "js/ibon_ticket.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://orders.ibon.com.tw/application/utkK02/UTK0201_001.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0201_001.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/utk02/UTK0202_.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*",
-                "https://orders.ibon.com.tw/application/UTK02/UTK0202_.aspx?PERFORMANCE_ID=*PERFORMANCE_PRICE_AREA_ID=*"
-            ],
-            "run_at": "document_end",
-            "world": "MAIN",
-            "js": [
-                "jquery.min.js",
-                "js/ibon_ticket_next.js"
-            ]
-        },
-        {
-            "matches": [
                 "https://ticket.ibon.com.tw/EventBuy/*/*/*"
             ],
             "run_at": "document_end",
@@ -459,5 +409,5 @@
         }
 
     ],
-    "version": "1.0.30"
+    "version": "1.0.31"
 }

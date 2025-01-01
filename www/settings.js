@@ -595,6 +595,9 @@ function check_unsaved_fields() {
             if (homepage.value.indexOf("cityline.com") > 0) {
                 $("#webdriver_type").val("nodriver");
             }
+            if (homepage.value.indexOf(".ibon.com.tw") > 0) {
+                $("#webdriver_type").val("nodriver");
+            }
         }
     }
 }
