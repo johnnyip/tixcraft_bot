@@ -33,7 +33,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.01)"
+CONST_APP_VERSION = "MaxBot (2024.06.02)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1582,8 +1582,11 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
         if target_area:
             wrapper: Element = uc.core.element.create(target_area, tab)
             print("click on tr")
-            await wrapper.click()
-            is_price_assign_by_bot = True
+            try:
+                await wrapper.click()
+                is_price_assign_by_bot = True
+            except Exception as exc:
+                pass
     else:
         if is_tr_ready:
             is_need_refresh = True
@@ -1729,7 +1732,11 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
             is_event_page = True
         if is_event_page:
             # ibon auto press signup
-            await nodriver_press_button(tab, '.btn.btn-signup')
+            try:
+                await nodriver_press_button(tab, '.btn.btn-signup')
+            except Exception as exc:
+                print(exc)
+                pass
 
     is_match_target_feature = False
 
@@ -1824,7 +1831,11 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
 $('input[type=checkbox]').each(function() {
    $(this).prop('checked', true);
 });"""
-                        await tab.evaluate(js)
+                        try:
+                            await tab.evaluate(js)
+                        except Exception as exc:
+                            print(exc)
+                            pass
 
                     if config_dict["ticket_number"] > 0:
                         js = """
@@ -1844,7 +1855,11 @@ if ($main_table.length > 0){{
         if (!is_ticket_number_assign) $ticket_options.last().prop('selected', true);
     }}
 }}""".format(config_dict["ticket_number"])
-                        await tab.evaluate(js)
+                        try:
+                            await tab.evaluate(js)
+                        except Exception as exc:
+                            print(exc)
+                            pass
     
                         try:
                             select_query = "table.table select"
