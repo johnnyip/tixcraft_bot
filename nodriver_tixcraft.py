@@ -1486,21 +1486,25 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
     try:
         select_query = "#AreaTable > div"
         div_host: Element = await tab.query_selector(select_query)
-        iframe: Node = div_host.shadow_roots[0]
-        for node in iframe.children:
-            if node.local_name=='table':
-                for children in node.children:
-                    if children.local_name=='tbody':
-                        for tr in children.children:
-                            is_tr_ready = True
-                            if 'id' in tr.attributes and 'class' in tr.attributes:
-                                skip_this_row = False
-                                if 'disabled' in tr.attributes:
-                                    skip_this_row = True
-                                if 'sold-out' in tr.attributes:
-                                    skip_this_row = True
-                                if not skip_this_row:
-                                    area_list.append(tr)
+        if div_host:
+            if div_host.shadow_roots:
+                iframe: Node = div_host.shadow_roots[0]
+                if iframe:
+                    for node in iframe.children:
+                        if node.local_name=='table':
+                            for children in node.children:
+                                if children.local_name=='tbody':
+                                    for tr in children.children:
+                                        if 'id' in tr.attributes and 'class' in tr.attributes:
+                                            is_tr_ready = True
+
+                                            skip_this_row = False
+                                            if 'disabled' in tr.attributes:
+                                                skip_this_row = True
+                                            if 'sold-out' in tr.attributes:
+                                                skip_this_row = True
+                                            if not skip_this_row:
+                                                area_list.append(tr)
     except Exception as exc:
         print(exc)
         pass
@@ -1640,28 +1644,24 @@ async def nodriver_ibon_next(tab, config_dict):
         select_query = "div#Next > div"
         div_host: Element = await tab.query_selector(select_query)
         if div_host:
-            iframe: Node = div_host.shadow_roots[0]
-            for node in iframe.children:
-                if node.local_name=='a':
-                    a_tag: Element = uc.core.element.create(node, tab)
-                    await a_tag.click()
+            if div_host.shadow_roots:
+                iframe: Node = div_host.shadow_roots[0]
+                if iframe:
+                    for node in iframe.children:
+                        if node.local_name=='a':
+                            a_tag: Element = uc.core.element.create(node, tab)
+                            await a_tag.click()
     except Exception as exc:
         print(exc)
         pass
 
-async def nodriver_ibon_ocr_span(tab, config_dict, ocr):
+async def nodriver_ibon_ocr_span_shadow(tab, config_dict, ocr, node):
     try:
-        select_query = "#ticket-wrap > div.row > div > div > div > span"
-        div_host: Element = await tab.query_selector(select_query)
-        if div_host:
-            iframe: Node = div_host.shadow_roots[0]
-            for node in iframe.children:
-                if node.local_name=='img':
-                    img_tag: Element = uc.core.element.create(node, tab)
-                    if img_tag:
-                        #html = await img_tag.get_html()
-                        #print(html)
-                        img_data = await img_tag.apply("""function (img) {
+        img_tag: Element = uc.core.element.create(node, tab)
+        if img_tag:
+            #html = await img_tag.get_html()
+            #print(html)
+            img_data = await img_tag.apply("""function (img) {
 let canvas = document.createElement('canvas');
 let context = canvas.getContext('2d');
 canvas.height = img.naturalHeight;
@@ -1671,36 +1671,42 @@ let img_data = canvas.toDataURL();
 if(img_data) {image_data = img_data.split(",")[1];}
 return img_data;
                             } """)
-                        #print("img_data")
-                        #print(img_data)
-                        ocr_answer = ""
-                        img_base64 = None
-                        if len(img_data) > 0:
-                            img_base64 = base64.b64decode(img_data.split(',')[1])
-                        if img_base64:
-                            try:
-                                ocr_answer = ocr.classification(img_base64)
-                            except Exception as exc:
-                                ocr_answer = ""
-                                print(exc)
-                                pass
-                        if len(ocr_answer) == 4:
-                            print(ocr_answer)
+            ocr_answer = ""
+            img_base64 = None
+            if len(img_data) > 0:
+                img_base64 = base64.b64decode(img_data.split(',')[1])
+            if img_base64:
+                ocr_answer = ocr.classification(img_base64)
+            if len(ocr_answer) == 4:
+                print(ocr_answer)
+                select_query = "div.editor-box > div > input[type='text']"
+                ocr_input: Element = await tab.query_selector(select_query)
+                if ocr_input:
+                    await ocr_input.click()
+                    await ocr_input.apply('function (element) {element.value = ""}')
+                    await ocr_input.send_keys(ocr_answer)
+                    await nodriver_ibon_next(tab, config_dict)
+            else:
+                select_query = 'img[onclick="refreshCaptcha();"]'
+                refresh_button: Element = await tab.query_selector(select_query)
+                if refresh_button:
+                    await refresh_button.click()
+                    time.sleep(0.5)
+    except Exception as exc:
+        print(exc)
+        pass
 
-                            select_query = "div.editor-box > div > input[type='text']"
-                            ocr_input: Element = await tab.query_selector(select_query)
-                            if ocr_input:
-                                await ocr_input.click()
-                                await ocr_input.apply('function (element) {element.value = ""}')
-                                await ocr_input.send_keys(ocr_answer)
-                                await nodriver_ibon_next(tab, config_dict)
-                        else:
-                            select_query = 'img[onclick="refreshCaptcha();"]'
-                            refresh_button: Element = await tab.query_selector(select_query)
-                            if refresh_button:
-                                await refresh_button.click()
-                                time.sleep(0.5)
-
+async def nodriver_ibon_ocr_span(tab, config_dict, ocr):
+    try:
+        select_query = "#ticket-wrap > div.row > div > div > div > span"
+        div_host: Element = await tab.query_selector(select_query)
+        if div_host:
+            if div_host.shadow_roots:
+                iframe: Node = div_host.shadow_roots[0]
+                if iframe:
+                    for node in iframe.children:
+                        if node.local_name=='img':
+                            await nodriver_ibon_ocr_span_shadow(tab, config_dict, ocr, node)
     except Exception as exc:
         print(exc)
         pass
@@ -1803,26 +1809,10 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
 
         if is_event_page:
             if config_dict["area_auto_select"]["enable"]:
-
-                is_do_ibon_performance_with_ticket_number = False
-
                 if 'PRODUCT_ID=' in url.upper():
-                    # step 1: select area.
-                    is_price_assign_by_bot = False
                     is_price_assign_by_bot = await nodriver_ibon_performance(tab, config_dict)
 
-                    #print("is_price_assign_by_bot:", is_price_assign_by_bot)
-                    if not is_price_assign_by_bot:
-                        # this case show captcha and ticket-number in this page.
-                        # TODO:
-                        #if ibon_ticket_number_appear(driver, config_dict):
-                        #    is_do_ibon_performance_with_ticket_number = True
-                        pass
-
                 if 'PERFORMANCE_PRICE_AREA_ID=' in url.upper():
-                    is_do_ibon_performance_with_ticket_number = True
-
-                if is_do_ibon_performance_with_ticket_number:
                     if config_dict["advanced"]["disable_adjacent_seat"]:
                         # solution 1:
                         #is_finish_checkbox_click = await nodriver_check_checkbox(tab, '.asp-checkbox > input[type="checkbox"]:not(:checked)')
