@@ -478,6 +478,10 @@ class SaveJsonHandler(tornado.web.RequestHandler):
             if ".cityline.com" in config_dict["homepage"]:
                 config_dict["webdriver_type"] = CONST_WEBDRIVER_TYPE_NODRIVER
 
+            # due to shadow-root.
+            if ".ibon.com.tw" in config_dict["homepage"]:
+                config_dict["webdriver_type"] = CONST_WEBDRIVER_TYPE_NODRIVER
+
             util.save_json(config_dict, config_filepath)
 
         if not is_pass_check:
