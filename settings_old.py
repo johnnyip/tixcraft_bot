@@ -34,7 +34,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.02)"
+CONST_APP_VERSION = "MaxBot (2024.06.03)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1088,7 +1088,13 @@ def btn_save_act(slience_mode=False):
         config_dict["ocr_captcha"]["force_submit"] = bool(chk_state_ocr_captcha_force_submit.get())
         config_dict["ocr_captcha"]["image_source"] = combo_ocr_captcha_image_source.get().strip()
 
+        if 'cityline.com' in config_dict["homepage"]:
+            combo_webdriver_type.set("nodriver")
+
+        if '.ibon.com.tw' in config_dict["homepage"]:
+            combo_webdriver_type.set("nodriver")
         config_dict["webdriver_type"] = combo_webdriver_type.get().strip()
+
         config_dict["advanced"]["headless"] = bool(chk_state_headless.get())
         #config_dict["advanced"]["verbose"] = bool(chk_state_verbose.get())
 
@@ -1555,6 +1561,9 @@ def showHideBlocks():
     global combo_webdriver_type
     if 'combo_webdriver_type' in globals():
         if 'cityline.com' in new_homepage:
+            combo_webdriver_type.set("nodriver")
+
+        if '.ibon.com.tw' in new_homepage:
             combo_webdriver_type.set("nodriver")
 
     show_block_index = BLOCK_STYLE_TIXCRAFT
