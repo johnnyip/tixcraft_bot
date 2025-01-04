@@ -577,11 +577,11 @@ function check_unsaved_fields() {
         // check spcial feature for sites.
         if (homepage.value.length) {
             let special_site = "";
-            const special_site_list = ["kktix", "cityline"];
+            const special_site_list = ["kktix", "cityline","ibon"];
             for (let i = 0; i < special_site_list.length; i++) {
                 const site = special_site_list[i];
-                const match_url_1 = "." + site + ".com/";
-                const match_url_2 = "/" + site + ".com/";
+                const match_url_1 = "." + site + ".com";
+                const match_url_2 = "/" + site + ".com";
                 //console.log(match_url);
                 if (homepage.value.indexOf(match_url_1) > 0 || homepage.value.indexOf(match_url_2) > 0) {
                     special_site = site;

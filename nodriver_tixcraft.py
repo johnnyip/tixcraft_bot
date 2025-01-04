@@ -33,7 +33,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.03)"
+CONST_APP_VERSION = "MaxBot (2024.06.04)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -381,6 +381,17 @@ async def nodriver_goto_homepage(driver, config_dict):
                 new_cookie = cdp.network.CookieParam("ibonqware",ibonqware, domain=".ibon.com.tw", path="/", http_only=True, secure=True)
                 cookies.append(new_cookie)
             await driver.cookies.set_all(cookies)
+
+        if 'https://ticket.ibon.com.tw/ActivityInfo/Details/' in homepage:
+            #如果首頁設在 https://ticket.ibon.com.tw/ActivityInfo/Details/xxxx, 日期頁面, 透過程式自動按一次重新整理頁面(F5).
+            time.sleep(3)
+            try:
+                for each_tab in driver.tabs:
+                    await each_tab.reload()
+            except Exception as exc:
+                print(exc)
+                pass            
+        
 
     return tab
 
