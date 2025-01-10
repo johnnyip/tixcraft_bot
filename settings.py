@@ -24,7 +24,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.05)"
+CONST_APP_VERSION = "MaxBot (2024.06.06)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -394,7 +394,11 @@ class QuestionHandler(tornado.web.RequestHandler):
 
 class HomepageHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("www/settings.html")
+        Root_Dir = util.get_app_root()
+        web_folder = os.path.join(Root_Dir, "www")
+        html_path = os.path.join(web_folder, "settings.html")
+        if os.path.exists(html_path):
+            self.render(html_path)
 
 class VersionHandler(tornado.web.RequestHandler):
     def get(self):
