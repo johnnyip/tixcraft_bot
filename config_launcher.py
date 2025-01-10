@@ -24,7 +24,7 @@ import webbrowser
 
 import util
 
-CONST_APP_VERSION = "MaxBot (2024.06.04)"
+CONST_APP_VERSION = "MaxBot (2024.06.05)"
 
 CONST_MAXBOT_LAUNCHER_FILE = "config_launcher.json"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -122,7 +122,10 @@ def load_translate():
 def get_default_config():
     config_dict={}
 
-    config_dict["list"] = [CONST_MAXBOT_CONFIG_FILE]
+    filelist = [CONST_MAXBOT_CONFIG_FILE]
+    for i in range(15-1):
+        filelist.append("")
+    config_dict["list"] = filelist
 
     config_dict["advanced"] = {}
     config_dict["advanced"]["language"] = "English"
@@ -170,8 +173,13 @@ def btn_save_act(slience_mode=True):
     config_dict["advanced"]["language"] = combo_language.get().strip()
     language_code = get_language_code_by_name(config_dict["advanced"]["language"])
 
-    filelist = [txt_file_name[i].get().strip() for i in range(15)]
-    config_dict["list"] = filelist
+    global widgets
+    if "widgets" in globals():
+        filelist = []
+        for i in range(15):
+            filename=widgets['txt_file_name_value'][i].get().strip()
+            filelist.append(filename)
+        config_dict["list"] = filelist
 
     util.save_json(config_dict, config_filepath)
     
