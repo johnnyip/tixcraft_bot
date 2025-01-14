@@ -33,7 +33,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.06)"
+CONST_APP_VERSION = "MaxBot (2024.06.07)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1854,7 +1854,7 @@ if ($main_table.length > 0){{
             }}
         }});
         if (!is_ticket_number_assign) $ticket_options.last().prop('selected', true);
-    }}
+    }} else history.back();
 }}""".format(config_dict["ticket_number"])
                         try:
                             await tab.evaluate(js)
