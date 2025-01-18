@@ -577,7 +577,7 @@ function check_unsaved_fields() {
         // check spcial feature for sites.
         if (homepage.value.length) {
             let special_site = "";
-            const special_site_list = ["kktix", "cityline","ibon"];
+            const special_site_list = ["kktix", "cityline", "ibon"];
             for (let i = 0; i < special_site_list.length; i++) {
                 const site = special_site_list[i];
                 const match_url_1 = "." + site + ".com";
@@ -591,16 +591,27 @@ function check_unsaved_fields() {
             if (special_site.length) {
                 $('div[data-under="' + special_site + '"]').removeClass("disappear");
             }
+
             // for cityline.
             if (homepage.value.indexOf("cityline.com") > 0) {
                 $("#webdriver_type").val("nodriver");
             }
+            // for ibon.
             if (homepage.value.indexOf(".ibon.com.tw") > 0) {
                 $("#webdriver_type").val("nodriver");
             }
         }
     }
 }
+
+function homepage_onchange() {
+    // for tixcraft.
+    // PS: nodriver for tixcraft are not full support, ex: verify code, '/ticket/verify/'
+    if (homepage.value.indexOf("tixcraft.com") > 0) {
+        $("#webdriver_type").val("undetected_chromedriver");
+    }
+}
+
 
 function maxbot_status_api() {
     let api_url = "http://127.0.0.1:16888/status";
@@ -679,7 +690,7 @@ onchange_tag_list.forEach((tag) => {
 });
 
 homepage.addEventListener('keyup', check_unsaved_fields);
-
+homepage.addEventListener('change', homepage_onchange);
 
 let runMessageClearTimer;
 

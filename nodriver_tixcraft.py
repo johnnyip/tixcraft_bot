@@ -1118,6 +1118,39 @@ async def nodriver_tixcraft_input_check_code(tab, config_dict, fail_list, questi
 async def nodriver_tixcraft_ticket_main(tab, config_dict, ocr, Captcha_Browser, domain_name):
     await nodriver_check_checkbox(tab, '#TicketForm_agree:not(:checked)')
 
+async def nodirver_tixcraft_verify(tab, config_dict, fail_list):
+    question_selector = '.zone-verify'
+    return await nodriver_tixcraft_input_check_code(tab, config_dict, fail_list, question_selector)
+
+async def nodriver_tixcraft_input_check_code(tab, config_dict, fail_list, question_selector):
+    answer_list = []
+    question_text = ""
+    # TODO:
+    '''
+    question_text = get_text_by_selector(tab, question_selector, 'innerText')
+    if len(question_text) > 0:
+        write_question_to_file(question_text)
+
+        answer_list = util.get_answer_list_from_user_guess_string(config_dict, CONST_MAXBOT_ANSWER_ONLINE_FILE)
+        if len(answer_list)==0:
+            if config_dict["advanced"]["auto_guess_options"]:
+                answer_list = util.guess_tixcraft_question(tab, question_text)
+
+        inferred_answer_string = ""
+        for answer_item in answer_list:
+            if not answer_item in fail_list:
+                inferred_answer_string = answer_item
+                break
+
+        # PS: auto-focus() when empty inferred_answer_string with empty inputed text value.
+        input_text_css = "input[name='checkCode']"
+        next_step_button_css = ""
+        submit_by_enter = True
+        check_input_interval = 0.2
+        is_answer_sent, fail_list = fill_common_verify_form(tab, config_dict, inferred_answer_string, fail_list, input_text_css, next_step_button_css, submit_by_enter, check_input_interval)
+    '''
+    return fail_list
+
 async def nodriver_tixcraft_main(tab, url, config_dict, ocr, Captcha_Browser):
     global tixcraft_dict
     if not 'tixcraft_dict' in globals():
@@ -1200,6 +1233,7 @@ async def nodriver_tixcraft_main(tab, url, config_dict, ocr, Captcha_Browser):
     if '/ticket/verify/' in url:
         # TODO:
         #tixcraft_dict["fail_list"] = tixcraft_verify(driver, config_dict, tixcraft_dict["fail_list"])
+        #tixcraft_dict["fail_list"] = await nodirver_tixcraft_verify(tab, config_dict, tixcraft_dict["fail_list"])
         pass
     else:
         tixcraft_dict["fail_list"] = []
